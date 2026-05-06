@@ -3,6 +3,8 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from collections import Counter
 import numpy as np
+import pandas as pd
+import os
 
 def euclidean_distance(a, b):
     return np.sqrt(np.sum((a - b) ** 2))
@@ -91,5 +93,21 @@ for frac in data_fractions:
             gflops_local = (local_flops) / (time_comp * 1e9)
 
         print(f"{int(frac*100):6} % | {len(X_train):7} | {len(y_test_global):6} | {time_comp:9.4f} | {time_comm:9.4f} | {time_total:10.4f} | {gflops_local:7.4f} | {accuracy:.4f}")
+
+        results_df = pd.DataFrame([{
+            'Processes': size,
+            'Subset_%': int(frac*100),
+            'N_train': len(X_train),
+            'N_test': len(y_test_global),
+            'T_comp (s)': time_comp,
+            'T_comm (s)': time_comm,
+            'T_total (s)': time_total,
+            'GFLOP/s': gflops_local,
+            'Accuracy': accuracy
+        }])
+
+        filename = f"knn_results_{size}.csv"
+        write_header = not os.path.exists(filename)
+        results_df.to_csv(filename, mode='a', header=write_header, index=False)
 
     comm.Barrier()
