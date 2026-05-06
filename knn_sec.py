@@ -32,6 +32,13 @@ y_pred = [knn_predict(x, X_train, y_train, k) for x in X_test]
 # Evaluar
 accuracy = np.mean(y_pred == y_test)
 end_time = time.time()
+t_total = end_time - start_time
+
+# FLOPS
+flops_per_dist = 192
+flops = len(X_test) * len(X_train) * flops_per_dist
+gflops = flops / ((end_time - start_time) * 1e9)
 
 print(f"Accuracy: {accuracy:.4f}")
-print(f"Execution time (sequential): {end_time - start_time:.4f} sec")
+print(f"Execution time (sequential): {t_total:.4f} sec")
+print(f"GFLOPs: {gflops:.4f} GFLOPs/s")
