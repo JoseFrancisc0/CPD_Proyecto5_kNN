@@ -31,7 +31,7 @@ digits = None
 if rank == 0:
     digits = load_digits()
 
-data_fractions = [0.25, 0.5, 1.0]
+data_fractions = [0.25, 0.5, 0.75, 1.0]
 if rank == 0:
     print(f"=== PRUEBAS DE ESCALABILIDAD CON {size} PROCESOS ===")
     print("Subset % | N_Train | N_Test | T_Comp(s) | T_Comm(s) | T_Total(s) | GFLOP/s | Accuracy")
