@@ -57,6 +57,6 @@ results_df = pd.DataFrame([{
     'Accuracy': accuracy
 }])
 
-filename = "knn_results.csv"
+filename = "results/knn_results.csv"
 write_header = not os.path.exists(filename)
 results_df.to_csv(filename, mode='a', header=write_header, index=False)
