@@ -56,7 +56,7 @@ for frac in data_fractions:
 
     all_results.append({
         'Processes': 1,
-        'Subset_%': 100,
+        'Subset_%': int(frac*100),
         'N_train': len(X_train),
         'N_test': len(X_test),
         'T_comp (s)': t_total,
