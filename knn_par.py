@@ -106,7 +106,7 @@ for frac in data_fractions:
             'Accuracy': accuracy
         }])
 
-        filename = f"results/knn_results_{size}.csv"
+        filename = "results/knn_digits_results.csv"
         write_header = not os.path.exists(filename)
         results_df.to_csv(filename, mode='a', header=write_header, index=False)
 

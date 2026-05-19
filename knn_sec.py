@@ -16,47 +16,57 @@ def knn_predict(test_point, X_train, y_train, k):
     most_common = Counter(k_labels).most_common(1)
     return most_common[0][0]
 
-# Cargar y dividir los datos
+# Cargar dataset
 digits = load_digits()
-X_train, X_test, y_train, y_test = train_test_split(
-    digits.data, digits.target, test_size=0.2, random_state=42
-)
-
-# Parámetro
 k = 3
 
-# Medir tiempo de ejecución
-start_time = time.time()
+# Subsets de N
+data_fractions = [0.25, 0.5, 0.75, 1.0]
+all_results = []
 
-# Realizar predicciones
-y_pred = [knn_predict(x, X_train, y_train, k) for x in X_test]
+print("=== PRUEBAS SECUENCIALES (p=1) ===")
+print("Subset % | N_train | N_test | T_total (s) | GFLOP/s | Accuracy")
+print("-" * 65)
 
-# Evaluar
-accuracy = np.mean(y_pred == y_test)
-end_time = time.time()
-t_total = end_time - start_time
+for frac in data_fractions:
+    n_samples = int(len(digits.data) * frac)
+    X_subset = digits.data[:n_samples]
+    y_subset = digits.target[:n_samples]
 
-# FLOPS
-flops_per_dist = 192
-flops = len(X_test) * len(X_train) * flops_per_dist
-gflops = flops / ((end_time - start_time) * 1e9)
 
-print(f"Accuracy: {accuracy:.4f}")
-print(f"Execution time (sequential): {t_total:.4f} sec")
-print(f"GFLOPs: {gflops:.4f} GFLOPs/s")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_subset, y_subset, test_size=0.2, random_state=42
+    )
 
-results_df = pd.DataFrame([{
-    'Processes': 1,
-    'Subset_%': 100,
-    'N_train': len(X_train),
-    'N_test': len(X_test),
-    'T_comp (s)': t_total,
-    'T_comm (s)': 0.0,
-    'T_total (s)': t_total,
-    'GFLOP/s': gflops,
-    'Accuracy': accuracy
-}])
+    # Medir tiempo de ejecución
+    start_time = time.time()
+    y_pred = [knn_predict(x, X_train, y_train, k) for x in X_test]
+    end_time = time.time()
 
-filename = "results/knn_results.csv"
-write_header = not os.path.exists(filename)
-results_df.to_csv(filename, mode='a', header=write_header, index=False)
+    # Evaluar
+    accuracy = np.mean(y_pred == y_test)
+    t_total = end_time - start_time
+
+    # FLOPS
+    flops_per_dist = 192
+    flops = len(X_test) * len(X_train) * flops_per_dist
+    gflops = flops / ((t_total) * 1e9)
+
+    print(f"{int(frac*100):6} % | {len(X_train):7} | {len(X_test):6} | {t_total:11.4f} | {gflops:7.4f} | {accuracy:.4f}")
+
+    all_results.append({
+        'Processes': 1,
+        'Subset_%': 100,
+        'N_train': len(X_train),
+        'N_test': len(X_test),
+        'T_comp (s)': t_total,
+        'T_comm (s)': 0.0,
+        'T_total (s)': t_total,
+        'GFLOP/s': gflops,
+        'Accuracy': accuracy
+    })
+
+filename = "results/knn_digits_results.csv"
+os.makedirs(os.path.dirname(filename), exist_ok=True)
+results_df = pd.DataFrame(all_results)
+results_df.to_csv(filename, mode='w', header=True, index=False)
