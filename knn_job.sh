@@ -5,7 +5,7 @@
 #SBATCH --ntasks=32
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=90G
-#SBATCH --time=02:00:00
+#SBATCH --time=06:00:00
 #SBATCH --output=slurm-%j.out
 
 # 1. Limpiar y cargar los módulos necesarios
@@ -21,13 +21,13 @@ mkdir -p results
 
 # 3. Ejecución Secuencial (p=1)
 echo "=== INICIANDO P=1 (SECUENCIAL) ==="
-python3 knn_sec_cluster.py
+python3 -u knn_sec_cluster.py
 
 # 4. Ejecución Paralela
 echo "=== INICIANDO MPI (PARALELO) ==="
 for p in 2 4 8 16 32; do
     echo "Lanzando con $p procesos..."
-    mpiexec -n $p python3 knn_par_cluster.py
+    mpiexec -n $p python3 -u knn_par_cluster.py
 done
 
 echo "=== TRABAJO FINALIZADO ==="

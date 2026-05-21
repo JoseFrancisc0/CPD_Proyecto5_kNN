@@ -67,6 +67,8 @@ for frac in data_fractions:
     start_comp = MPI.Wtime()
     local_y_pred = np.zeros(len(local_X_test), dtype=int)
     for i, x in enumerate(local_X_test):
+        if rank == 0 and i % 100 == 0 and i > 0:
+            print(f"   -> [Rank 0] Procesadas {i}/{len(local_X_test)} imágenes de su bloque...")
         local_y_pred[i] = int(knn_predict(x, X_train, y_train, k))
     time_comp = MPI.Wtime() - start_comp
 

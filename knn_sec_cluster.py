@@ -41,7 +41,11 @@ for frac in data_fractions:
 
     # Medir tiempo de ejecución
     start_time = time.time()
-    y_pred = [knn_predict(x, X_train, y_train, k) for x in X_test]
+    y_pred = []
+    for i, x in enumerate(X_test):
+        if i % 1000 == 0 and i > 0:
+            print(f"   -> Procesadas {i}/{len(X_test)} imágenes de prueba...")
+        y_pred.append(knn_predict(x, X_train, y_train, k))
     end_time = time.time()
 
     # Evaluar
