@@ -71,7 +71,7 @@ for frac in data_fractions:
         'Accuracy': accuracy
     })
 
-filename = "results/knn_cluster_results.csv"
+filename = "results/knn_cluster_results_v2.csv"
 os.makedirs(os.path.dirname(filename), exist_ok=True)
 
 with open(filename, mode='w', newline='') as f:
