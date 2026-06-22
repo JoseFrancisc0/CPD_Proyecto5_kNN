@@ -42,7 +42,7 @@ for frac in data_fractions:
         k = 3
         X_test = X_test_full
         chunks_X_train = np.array_split(X_train_full, size)
-        chunks_y_train = np.array_split(y_full, size)
+        chunks_y_train = np.array_split(y_train_full, size)
         y_test_global = y_test_full
 
     comm.barrier()
